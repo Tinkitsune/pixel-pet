@@ -182,7 +182,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         color:'#66ff88'
       },
       bubble: { x: 130, y: 58 },
-      steam: { x: 272, y: 128 },
+      steam: { x: 218, y: 147 },
       cat: { x: 314, y: 262 },
       dust: { x: 180, y: 80, w: 120, h: 100 },
     };
@@ -286,13 +286,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     function drawSteam(){
       let s=cfg.steam;
-      for(let i=0;i<3;i++){
-        let sy=s.y-4-i*3;
-        let sx=s.x+2+i*2+Math.sin(tick*0.06+i*1.2)*3;
-        let a=0.12-i*0.03+0.04*Math.sin(tick*0.08+i);
+      for(let i=0;i<5;i++){
+        let t=tick*0.04+i*1.4;
+        let rise=i*5+Math.sin(t)*2;
+        let sy=s.y-rise;
+        let sx=s.x+Math.sin(t*0.7+i)*3;
+        let a=0.4-i*0.06;
+        let sz=1.5+i*0.4;
         if(a>0){
-          X.fillStyle=`rgba(220,200,180,${a})`;
-          X.fillRect(sx,sy,2,4);
+          X.fillStyle=`rgba(255,245,235,${a})`;
+          X.beginPath();
+          X.arc(sx,sy,sz,0,Math.PI*2);
+          X.fill();
         }
       }
     }
@@ -327,6 +332,33 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       X.globalAlpha=za*0.4;
       X.fillText('z',c.x+2,c.y-16-za*8);
       X.globalAlpha=1;
+    }
+
+    function drawClock(){
+      let now=new Date();
+      let h=String(now.getHours()).padStart(2,'0');
+      let m=String(now.getMinutes()).padStart(2,'0');
+      let blink=tick%60<30;
+      let timeStr=h+(blink?':':' ')+m;
+
+      // Position: left wall, above the lamp
+      let cx=105,cy=82;
+
+      // Clock body - small dark rectangle with slight perspective
+      X.save();
+      X.fillStyle='rgba(30,25,20,0.85)';
+      X.fillRect(cx-16,cy-7,32,14);
+      X.strokeStyle='rgba(80,70,55,0.6)';
+      X.lineWidth=0.5;
+      X.strokeRect(cx-16,cy-7,32,14);
+
+      // Time text - pixel green like the monitor
+      X.font='bold 9px monospace';
+      X.fillStyle='rgba(100,255,130,0.9)';
+      X.textAlign='center';
+      X.fillText(timeStr,cx,cy+3);
+      X.textAlign='left';
+      X.restore();
     }
 
     function drawBubble(){

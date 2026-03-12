@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>Claude Pixel Pet</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #1a1a2e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+}
+
+.scene {
+  position: relative;
+  width: 480px;
+  height: 360px;
+  background: #16213e;
+  border-radius: 16px;
+  border: 3px solid #0f3460;
+  overflow: hidden;
+  image-rendering: pixelated;
+}
+
+/* Floor */
+.floor {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 80px;
+  background: repeating-linear-gradient(
+    90deg,
+    #2a1a0a 0px, #2a1a0a 24px,
+    #3a2a1a 24px, #3a2a1a 48px
+  );
+  border-top: 3px solid #4a3a2a;
+}
+
+/* Wall */
+.wall {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 280px;
+  background: linear-gradient(180deg, #1a1a3e 0%, #16213e 100%);
+}
+
+/* Window on wall */
+.window-frame {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 90px;
+  background: #0a0a2e;
+  border: 4px solid #4a4a6a;
+  border-radius: 4px;
+}
+.window-frame::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  width: 4px; height: 100%;
+  background: #4a4a6a;
+  transform: translateX(-50%);
+}
+.window-frame::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 0;
+  width: 100%; height: 4px;
+  background: #4a4a6a;
+  transform: translateY(-50%);
+}
+.stars {
+  position: absolute;
+  top: 40px; left: 50%;
+  transform: translateX(-50%);
+  width: 112px; height: 82px;
+}
+.star {
+  position: absolute;
+  width: 3px; height: 3px;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle 2s ease-in-out infinite;
+}
+.star:nth-child(1) { top: 15px; left: 20px; animation-delay: 0s; }
+.star:nth-child(2) { top: 35px; left: 70px; animation-delay: 0.7s; }
+.star:nth-child(3) { top: 10px; left: 85px; animation-delay: 1.3s; }
+.star:nth-child(4) { top: 55px; left: 30px; animation-delay: 0.4s; }
+.star:nth-child(5) { top: 25px; left: 50px; animation-delay: 1.0s; }
+
+@keyframes twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+/* Desk */
+.desk {
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: 50px;
+  background: #5a3a1a;
+  border: 3px solid #4a2a0a;
+  border-radius: 4px 4px 0 0;
+}
+.desk-leg-l, .desk-leg-r {
+  position: absolute;
+  bottom: 40px;
+  width: 8px;
+  height: 30px;
+  background: #4a2a0a;
+}
+.desk-leg-l { left: calc(50% - 68px); }
+.desk-leg-r { left: calc(50% + 60px); }
+
+/* Monitor on desk */
+.monitor {
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 44px;
+  background: #222;
+  border: 3px solid #444;
+  border-radius: 4px;
+}
+.monitor-screen {
+  width: 100%;
+  height: 100%;
+  background: #0a2a0a;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+}
+.monitor-text {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  font-size: 6px;
+  color: #0f0;
+  line-height: 1.4;
+  animation: typing 3s steps(20) infinite;
+  white-space: pre;
+  overflow: hidden;
+}
+@keyframes typing {
+  0% { width: 0; }
+  50% { width: 100%; }
+  100% { width: 100%; }
+}
+.monitor-stand {
+  position: absolute;
+  bottom: 117px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 6px;
+  background: #444;
+}
+
+/* Coffee mug */
+.mug {
+  position: absolute;
+  bottom: 120px;
+  left: calc(50% + 45px);
+  width: 14px;
+  height: 12px;
+  background: #e8e8e8;
+  border-radius: 0 0 3px 3px;
+  border: 2px solid #ccc;
+}
+.mug::after {
+  content: '';
+  position: absolute;
+  right: -7px;
+  top: 1px;
+  width: 6px;
+  height: 8px;
+  border: 2px solid #ccc;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+}
+.steam {
+  position: absolute;
+  bottom: 132px;
+  left: calc(50% + 48px);
+  width: 8px;
+  height: 12px;
+}
+.steam-line {
+  position: absolute;
+  width: 2px;
+  height: 8px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 2px;
+  animation: steam 2s ease-in-out infinite;
+}
+.steam-line:nth-child(1) { left: 0; animation-delay: 0s; }
+.steam-line:nth-child(2) { left: 4px; animation-delay: 0.5s; }
+@keyframes steam {
+  0% { transform: translateY(0) scaleY(1); opacity: 0.5; }
+  100% { transform: translateY(-10px) scaleY(1.5); opacity: 0; }
+}
+
+/* Character */
+.character {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-80px);
+  width: 32px;
+  height: 48px;
+  image-rendering: pixelated;
+}
+
+/* Pixel art character using box shadows */
+.char-head {
+  position: absolute;
+  top: 0;
+  left: 4px;
+  width: 24px;
+  height: 24px;
+  background: #e8a87c;
+  border-radius: 4px;
+  border: 2px solid #c88a5c;
+}
+/* Eyes */
+.char-eye-l, .char-eye-r {
+  position: absolute;
+  width: 4px;
+  height: 5px;
+  background: #222;
+  border-radius: 2px;
+  top: 9px;
+  transition: height 0.15s;
+}
+.char-eye-l { left: 10px; }
+.char-eye-r { left: 18px; }
+
+/* Blink animation */
+.blink .char-eye-l, .blink .char-eye-r {
+  height: 2px;
+  top: 11px;
+}
+
+/* Mouth */
+.char-mouth {
+  position: absolute;
+  top: 16px;
+  left: 13px;
+  width: 6px;
+  height: 3px;
+  border-bottom: 2px solid #c06040;
+  border-radius: 0 0 3px 3px;
+}
+
+/* Hair */
+.char-hair {
+  position: absolute;
+  top: -2px;
+  left: 2px;
+  width: 28px;
+  height: 10px;
+  background: #e94560;
+  border-radius: 4px 4px 0 0;
+}
+
+/* Body */
+.char-body {
+  position: absolute;
+  top: 24px;
+  left: 6px;
+  width: 20px;
+  height: 16px;
+  background: #e94560;
+  border-radius: 2px;
+}
+
+/* Arms */
+.char-arm-l, .char-arm-r {
+  position: absolute;
+  top: 26px;
+  width: 6px;
+  height: 14px;
+  background: #e94560;
+  border-radius: 2px;
+  transform-origin: top center;
+  transition: transform 0.3s;
+}
+.char-arm-l { left: 1px; }
+.char-arm-r { left: 25px; }
+
+/* Typing animation */
+.typing .char-arm-l {
+  animation: typeL 0.4s ease-in-out infinite alternate;
+}
+.typing .char-arm-r {
+  animation: typeR 0.4s ease-in-out infinite alternate-reverse;
+}
+@keyframes typeL {
+  0% { transform: rotate(-15deg); }
+  100% { transform: rotate(-25deg); }
+}
+@keyframes typeR {
+  0% { transform: rotate(15deg); }
+  100% { transform: rotate(25deg); }
+}
+
+/* Legs */
+.char-leg-l, .char-leg-r {
+  position: absolute;
+  top: 38px;
+  width: 8px;
+  height: 10px;
+  background: #333;
+  border-radius: 0 0 2px 2px;
+}
+.char-leg-l { left: 7px; }
+.char-leg-r { left: 17px; }
+
+/* Chair */
+.chair {
+  position: absolute;
+  bottom: 68px;
+  left: 50%;
+  transform: translateX(-78px);
+  width: 36px;
+  height: 40px;
+}
+.chair-seat {
+  position: absolute;
+  bottom: 12px;
+  width: 36px;
+  height: 6px;
+  background: #333;
+  border-radius: 2px;
+}
+.chair-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 30px;
+  background: #333;
+  border-radius: 2px;
+}
+.chair-leg1, .chair-leg2 {
+  position: absolute;
+  bottom: 0;
+  width: 4px;
+  height: 12px;
+  background: #555;
+}
+.chair-leg1 { left: 4px; }
+.chair-leg2 { right: 4px; }
+
+/* Speech bubble */
+.bubble {
+  position: absolute;
+  bottom: 170px;
+  left: 50%;
+  transform: translateX(-90px);
+  background: #fff;
+  color: #222;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 12px;
+  max-width: 200px;
+  opacity: 0;
+  transition: opacity 0.5s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.bubble.show { opacity: 1; }
+.bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 20px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #fff;
+}
+
+/* Status bar */
+.status-bar {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.6);
+  color: #0f0;
+  padding: 4px 16px;
+  border-radius: 8px;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+/* Bookshelf */
+.bookshelf {
+  position: absolute;
+  top: 60px;
+  right: 30px;
+  width: 50px;
+  height: 60px;
+}
+.shelf { position: absolute; width: 50px; height: 4px; background: #5a3a1a; }
+.shelf:nth-child(1) { top: 0; }
+.shelf:nth-child(2) { top: 28px; }
+.shelf:nth-child(3) { top: 56px; }
+.book {
+  position: absolute;
+  bottom: 4px;
+  width: 8px;
+  border-radius: 1px 1px 0 0;
+}
+.book1 { left: 4px; height: 22px; background: #e94560; }
+.book2 { left: 14px; height: 18px; background: #4a90d9; }
+.book3 { left: 24px; height: 24px; background: #50c878; }
+.book4 { left: 34px; height: 16px; background: #ffd700; }
+
+/* Plant */
+.plant {
+  position: absolute;
+  bottom: 80px;
+  right: 40px;
+}
+.pot {
+  width: 20px;
+  height: 16px;
+  background: #c85a30;
+  border-radius: 0 0 4px 4px;
+  position: relative;
+}
+.pot::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: -2px;
+  width: 24px;
+  height: 4px;
+  background: #a84a20;
+  border-radius: 2px;
+}
+.leaf {
+  position: absolute;
+  width: 10px;
+  height: 16px;
+  background: #50c878;
+  border-radius: 50% 0 50% 0;
+  bottom: 14px;
+}
+.leaf:nth-child(2) { left: -4px; transform: rotate(-30deg); }
+.leaf:nth-child(3) { left: 10px; transform: rotate(30deg); transform-origin: bottom left; }
+.leaf:nth-child(4) { left: 3px; bottom: 22px; transform: rotate(-10deg); }
+
+/* Clock */
+.clock {
+  position: absolute;
+  top: 50px;
+  left: 40px;
+  width: 30px;
+  height: 30px;
+  background: #fff;
+  border: 3px solid #888;
+  border-radius: 50%;
+}
+.clock-hand-h, .clock-hand-m {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  background: #333;
+  transform-origin: bottom center;
+}
+.clock-hand-h {
+  width: 2px;
+  height: 8px;
+  margin-left: -1px;
+  animation: rotateH 43200s linear infinite;
+}
+.clock-hand-m {
+  width: 2px;
+  height: 11px;
+  margin-left: -1px;
+  animation: rotateM 3600s linear infinite;
+}
+@keyframes rotateH { 100% { transform: rotate(360deg); } }
+@keyframes rotateM { 100% { transform: rotate(360deg); } }
+
+/* ZZZ sleep animation */
+.zzz {
+  position: absolute;
+  bottom: 160px;
+  left: 50%;
+  transform: translateX(-60px);
+  font-size: 16px;
+  color: #aaf;
+  opacity: 0;
+}
+.zzz.show {
+  animation: zzzAnim 3s ease-in-out infinite;
+}
+@keyframes zzzAnim {
+  0% { opacity: 0; transform: translateX(-60px) translateY(0); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-50px) translateY(-30px); }
+}
+</style>
+</head>
+<body>
+
+<div class="scene">
+  <div class="wall"></div>
+
+  <!-- Window -->
+  <div class="window-frame">
+    <div class="stars">
+      <div class="star"></div>
+      <div class="star"></div>
+      <div class="star"></div>
+      <div class="star"></div>
+      <div class="star"></div>
+    </div>
+  </div>
+
+  <!-- Clock -->
+  <div class="clock">
+    <div class="clock-hand-h" id="clockH"></div>
+    <div class="clock-hand-m" id="clockM"></div>
+  </div>
+
+  <!-- Bookshelf -->
+  <div class="bookshelf">
+    <div class="shelf"></div>
+    <div class="book book1"></div>
+    <div class="book book2"></div>
+    <div class="book book3"></div>
+    <div class="book book4"></div>
+    <div class="shelf"></div>
+  </div>
+
+  <!-- Plant -->
+  <div class="plant">
+    <div class="leaf"></div>
+    <div class="leaf"></div>
+    <div class="leaf"></div>
+    <div class="leaf"></div>
+    <div class="pot"></div>
+  </div>
+
+  <div class="floor"></div>
+
+  <!-- Desk -->
+  <div class="desk"></div>
+  <div class="desk-leg-l"></div>
+  <div class="desk-leg-r"></div>
+
+  <!-- Monitor -->
+  <div class="monitor">
+    <div class="monitor-screen">
+      <div class="monitor-text" id="monitorText">$ claude
+> 思考中...</div>
+    </div>
+  </div>
+  <div class="monitor-stand"></div>
+
+  <!-- Coffee -->
+  <div class="mug"></div>
+  <div class="steam">
+    <div class="steam-line"></div>
+    <div class="steam-line"></div>
+  </div>
+
+  <!-- Chair -->
+  <div class="chair">
+    <div class="chair-back"></div>
+    <div class="chair-seat"></div>
+    <div class="chair-leg1"></div>
+    <div class="chair-leg2"></div>
+  </div>
+
+  <!-- Character -->
+  <div class="character" id="char">
+    <div class="char-hair"></div>
+    <div class="char-head">
+      <div class="char-eye-l"></div>
+      <div class="char-eye-r"></div>
+      <div class="char-mouth"></div>
+    </div>
+    <div class="char-body"></div>
+    <div class="char-arm-l"></div>
+    <div class="char-arm-r"></div>
+    <div class="char-leg-l"></div>
+    <div class="char-leg-r"></div>
+  </div>
+
+  <!-- Speech bubble -->
+  <div class="bubble" id="bubble">你好！我在工作中~</div>
+
+  <!-- ZZZ -->
+  <div class="zzz" id="zzz">💤</div>
+
+  <!-- Status -->
+  <div class="status-bar" id="status">● 空闲中</div>
+</div>
+
+<script>
+const char = document.getElementById('char');
+const bubble = document.getElementById('bubble');
+const status = document.getElementById('status');
+const zzz = document.getElementById('zzz');
+const monitorText = document.getElementById('monitorText');
+const clockH = document.getElementById('clockH');
+const clockM = document.getElementById('clockM');
+
+// Set clock to real time
+function updateClock() {
+  const now = new Date();
+  const h = now.getHours() % 12;
+  const m = now.getMinutes();
+  clockH.style.transform = `rotate(${h * 30 + m * 0.5}deg)`;
+  clockM.style.transform = `rotate(${m * 6}deg)`;
+}
+updateClock();
+setInterval(updateClock, 60000);
+
+// States
+const states = {
+  idle: {
+    label: '● 空闲中',
+    bubble: ['在等你指令呢~', '要不要聊点什么？', '☕ 喝杯咖啡先', '准备好了！'],
+    typing: false,
+    sleep: false,
+    monitor: '$ claude\n> _'
+  },
+  thinking: {
+    label: '◆ 思考中...',
+    bubble: ['让我想想...', '嗯...这个问题...', '分析中📊', '正在推理...'],
+    typing: false,
+    sleep: false,
+    monitor: '$ claude\n> 思考中...\n> ...'
+  },
+  writing: {
+    label: '✎ 写代码中',
+    bubble: ['哒哒哒⌨️', '写得飞快！', '这段代码不错', '快写完了~'],
+    typing: true,
+    sleep: false,
+    monitor: '$ vim code.py\ndef analyze():\n  data = load()\n  return data'
+  },
+  reading: {
+    label: '📖 读文件中',
+    bubble: ['让我看看这个文件...', '原来如此！', '这里有个问题...', '读取中...'],
+    typing: false,
+    sleep: false,
+    monitor: '$ cat data.csv\ndate,amount\n09-01,1234\n09-02,5678'
+  },
+  running: {
+    label: '▶ 执行命令中',
+    bubble: ['跑起来了！', '命令执行中⚡', '等一下结果...', 'python3 go!'],
+    typing: true,
+    sleep: false,
+    monitor: '$ python3 run.py\n处理中...\n████░░ 67%'
+  },
+  searching: {
+    label: '🔍 搜索中',
+    bubble: ['找找看...', '搜索相关信息', '让我查一下', '翻遍代码库！'],
+    typing: false,
+    sleep: false,
+    monitor: '$ grep -r "bug"\nfound 3 matches\n> analyzing...'
+  },
+  sleeping: {
+    label: '😴 休息中',
+    bubble: [],
+    typing: false,
+    sleep: true,
+    monitor: '$ claude\n> 休息中...\n> zzz...'
+  }
+};
+
+let currentState = 'idle';
+let blinkInterval, stateInterval, bubbleInterval;
+
+// Blink
+function startBlink() {
+  blinkInterval = setInterval(() => {
+    char.classList.add('blink');
+    setTimeout(() => char.classList.remove('blink'), 150);
+  }, 3000 + Math.random() * 2000);
+}
+startBlink();
+
+function setState(name) {
+  const s = states[name];
+  if (!s) return;
+  currentState = name;
+
+  // Update status
+  status.textContent = s.label;
+  status.style.color = name === 'sleeping' ? '#666' : '#0f0';
+
+  // Typing animation
+  if (s.typing) {
+    char.classList.add('typing');
+  } else {
+    char.classList.remove('typing');
+  }
+
+  // Sleep
+  if (s.sleep) {
+    zzz.classList.add('show');
+    char.style.opacity = '0.7';
+  } else {
+    zzz.classList.remove('show');
+    char.style.opacity = '1';
+  }
+
+  // Monitor text
+  monitorText.textContent = s.monitor;
+
+  // Show bubble
+  if (s.bubble.length > 0) {
+    const msg = s.bubble[Math.floor(Math.random() * s.bubble.length)];
+    showBubble(msg);
+  } else {
+    bubble.classList.remove('show');
+  }
+}
+
+function showBubble(msg) {
+  bubble.textContent = msg;
+  bubble.classList.add('show');
+  setTimeout(() => bubble.classList.remove('show'), 4000);
+}
+
+// Auto cycle through states for demo
+const stateOrder = ['idle', 'thinking', 'writing', 'running', 'reading', 'searching', 'idle', 'sleeping'];
+let stateIdx = 0;
+
+function cycleState() {
+  setState(stateOrder[stateIdx]);
+  stateIdx = (stateIdx + 1) % stateOrder.length;
+}
+
+// Start cycling every 6 seconds
+stateInterval = setInterval(cycleState, 6000);
+setState('idle');
+
+// Poll status file (for Claude Code hooks integration)
+async function pollStatus() {
+  try {
+    const r = await fetch('/status.json?t=' + Date.now());
+    if (r.ok) {
+      const data = await r.json();
+      if (data.state && states[data.state]) {
+        clearInterval(stateInterval); // Stop auto cycle
+        setState(data.state);
+        if (data.message) showBubble(data.message);
+      }
+    }
+  } catch(e) {}
+  setTimeout(pollStatus, 2000);
+}
+// pollStatus(); // Uncomment when using with hooks
+
+// Click character for random reaction
+char.style.cursor = 'pointer';
+char.addEventListener('click', () => {
+  const reactions = ['被点了！😆', '别戳我啦~', '我在工作呢！', '嘿！👋', '要一起喝咖啡吗☕'];
+  showBubble(reactions[Math.floor(Math.random() * reactions.length)]);
+});
+</script>
+</body>
+</html>
